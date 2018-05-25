@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,7 +17,7 @@ namespace Warcaby
         /// <summary>
         /// Holds references to buttons
         /// </summary>
-        private Button[] buttons;
+        private Button[] mButtons;
         /// <summary>
         /// Holds the current results of cells in the active game
         /// </summary>
@@ -37,6 +38,10 @@ namespace Warcaby
         /// index of previous clicked button
         /// </summary>
         private int mPrevious;
+        /// <summary>
+        /// True if pawn was chosen
+        /// </summary>
+        private bool mIfClicked;
         #endregion
         #region Contructor
         /// <summary>
@@ -57,31 +62,25 @@ namespace Warcaby
             ///Create a new blan array of free cells
             mResults = new MarkType[64];
             for (var i = 0; i < 64; i++)
-                    mResults[i] = MarkType.Free;
+                mResults[i] = MarkType.Free;
 
 
             ///Make sure player 1 starts the game
             mPlayer1Turn = true;
 
-            //cast every bi
-            buttons = Container.Children.Cast<Button>().ToArray();
-            for(var i=0 ; i < 12;i++)
+            //set pawns on their default spots
+            mButtons = Container.Children.Cast<Button>().ToArray();
+            for (var i = 0; i < 12; i++)
             {
-                buttons[index[i]].Content = "B";
-                buttons[index[i]].Background = Brushes.DarkGray;
+                mButtons[index[i]].Content = "B";
                 mResults[index[i]] = MarkType.Black;
 
-                buttons[64- index[i]-1].Content = "W";
-                buttons[64-index[i]-1].Background = Brushes.DarkGray;
-                mResults[64 - index[i]-1] = MarkType.White;
+                mButtons[64 - index[i] - 1].Content = "W";
+                mResults[64 - index[i] - 1] = MarkType.White;
             }
 
-            //cast every bi
-            for (var i = 0; i < 16; i++)
-            {
-                buttons[index[i]].Background = Brushes.DarkGray;
-                buttons[64 - index[i] - 1].Background = Brushes.DarkGray;
-            }
+            //Set background color to default for all buttons
+            ClearAll();
             //Make sure the game hasn't finished
             mGameEnded = false;
         }
@@ -102,6 +101,7 @@ namespace Warcaby
                 return;
             }
 
+
             //Cast the sended to a button
             var button = (Button)sender;
             //finds buttons position in the array
@@ -109,12 +109,208 @@ namespace Warcaby
             var row = Grid.GetRow(button);
             var position = column + (row * 8);
 
-            // check if it's your pawn
-            if(mPlayer1Turn)
-                if ( mResults[position] != MarkType.Free)
-                        return;
+
+            // return if clicked on the same pawn
+            if (mIfClicked && position == mPrevious)
+            {
+                button.Background = Brushes.DarkGray;
+                mIfClicked ^= true;
+                return;
+            }
+            #region MarkGreen
+            // check if it's player white pawn
+            // mark green and add flag clicked and index of clicked element
+            if (mPlayer1Turn && !mIfClicked)
+                if (mResults[position] == MarkType.White)
+                {
+                    ClearAll();
+                    button.Background = Brushes.Green;
+                    mIfClicked ^= true;
+                    mPrevious = position;
+                }
+            // check if it's player black pawn
+            // mark green and add flag clicked and index of clicked element
+            if (!mPlayer1Turn && !mIfClicked)
+                if (mResults[position] == MarkType.Black)
+                {
+                    ClearAll();
+                    button.Background = Brushes.Green;
+                    mIfClicked ^= true;
+                    mPrevious = position;
+                }
+            #endregion
+            #region Diagonal atack
+            //check if it's a diagonal atack and if it is possible
+            Assault(position, button);
+            if (!IfAssault())
+            {
+                mPlayer1Turn ^= true;    
+            }
+            #endregion
+
+            #region Diagonal move
+            //check if  player can atack, block move untill player atack
+            if (!IfAssault())
+            {
+                //if clicked free space 1+ diagonally as white
+                if (mPlayer1Turn && mResults[position] == MarkType.Free && position == mPrevious - 9 || position == mPrevious - 7)
+                {
+                    Move(position, button);
+                    mPlayer1Turn ^= true;
+                }
+                //if clicked free space 1+ diagonally as black
+                else if (!mPlayer1Turn && mResults[position] == MarkType.Free && position == mPrevious + 9 || position == mPrevious + 7)
+                {
+                    Move(position, button);
+                    mPlayer1Turn ^= true;
+                }
+            }
+            else
+            {
+                return;
+            }
+            #endregion
 
 
+
+
+        }
+
+        private void ClearAll()
+        {
+            for (var i = 0; i < 16; i++)
+            {
+                mButtons[index[i]].Background = Brushes.DarkGray;
+                mButtons[64 - index[i] - 1].Background = Brushes.DarkGray;
+            }
+        }
+
+        private bool IfAssault()
+        {
+            var k = 0;
+
+
+            for (var i = 0; i<14; i++)
+            {
+                if (mResults[i] == MarkType.White && mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.Black){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+
+                }
+                else if (mResults[i] == MarkType.Black && !mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.White){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.White){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+
+            }
+            for (var i = 14; i < 18; i++)
+            {
+                if (mResults[i] == MarkType.White && mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.Black){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.Black){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+                else if (mResults[i] == MarkType.Black && !mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.White){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.White){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+
+            }
+            for (var i = 18; i < 46; i++)
+            {
+                if (mResults[i] == MarkType.White && mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+                else if (mResults[i] == MarkType.Black && !mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.White){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i + 18] == MarkType.Free && mResults[i + 9] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+                
+            }
+            for (var i = 46; i < 50; i++)
+            {
+                if (mResults[i] == MarkType.White && mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.Black){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.Black){ mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+                else if (mResults[i] == MarkType.Black && !mPlayer1Turn)
+                {
+                    if (mResults[i + 14] == MarkType.Free && mResults[i + 7] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+
+            }
+            for (var i = 50; i < 64; i++)
+            {
+                if (mResults[i] == MarkType.White && mPlayer1Turn)
+                {
+                    if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.Black) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                }
+                else if (mResults[i] == MarkType.Black && !mPlayer1Turn)
+                {
+                    if (mResults[i - 14] == MarkType.Free && mResults[i - 7] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+                    else if (mResults[i - 18] == MarkType.Free && mResults[i - 9] == MarkType.White) { mButtons[i].Background = Brushes.DarkOrange; k++; }
+
+                    }
+
+            }
+            if (k>0) return true;
+            return false;
+        }
+
+        private void Assault(int position, Button button)
+        {
+            if (mPlayer1Turn)
+            {
+                if (mResults[position] == MarkType.Free)
+                {
+                    if (position == mPrevious + 14 && mResults[mPrevious + 7] == MarkType.Black) { Move(position, button); Delete(mPrevious + 7);ClearAll(); }
+                    if (position == mPrevious + 18 && mResults[mPrevious + 9] == MarkType.Black) { Move(position, button); Delete(mPrevious + 9);ClearAll(); }
+                    if (position == mPrevious - 14 && mResults[mPrevious - 7] == MarkType.Black) { Move(position, button); Delete(mPrevious - 7);ClearAll(); }
+                    if (position == mPrevious - 18 && mResults[mPrevious - 9] == MarkType.Black) { Move(position, button); Delete(mPrevious - 9);ClearAll();}
+                }
+            }
+            else
+                if (mResults[position] == MarkType.Free)
+                {
+                    if (position == mPrevious + 14 && mResults[mPrevious + 7] == MarkType.White) { Move(position, button); Delete(mPrevious + 7);ClearAll();}
+                    if (position == mPrevious + 18 && mResults[mPrevious + 9] == MarkType.White) { Move(position, button); Delete(mPrevious + 9);ClearAll();}
+                    if (position == mPrevious - 14 && mResults[mPrevious - 7] == MarkType.White) { Move(position, button); Delete(mPrevious - 7);ClearAll();}
+                    if (position == mPrevious - 18 && mResults[mPrevious - 9] == MarkType.White) { Move(position, button); Delete(mPrevious - 9);ClearAll();}
+                }
+        }
+
+        private void Delete(int position)
+        {
+            mResults[position] = MarkType.Free;
+            mButtons[position].Content = "";
+        }
+
+        private void Move(int position,Button button)
+        {
+            mResults[position] = mResults[mPrevious];
+            mResults[mPrevious] = MarkType.Free;
+            button.Content = mButtons[mPrevious].Content;
+            mButtons[mPrevious].Content = "";
+            mButtons[mPrevious].Background = Brushes.DarkGray;
+            mIfClicked ^= true;
+            return;
         }
     }
 }
