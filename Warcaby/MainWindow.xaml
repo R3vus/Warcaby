@@ -5,8 +5,115 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Warcaby"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        ResizeMode="NoResize"
+        Title="Warcaby" Height="830" Width="1000">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+            <Setter Property="FontSize" Value="70"/>
+
+        </Style>
+        <Image x:Key="white" Source="C:\Users\r3vus\source\repos\checkers\Warcaby\White.png" Height="50" Width="50"/>
+        <Image x:Key="black" Source="C:\Users\r3vus\source\repos\checkers\Warcaby\Black.png" Height="50" Width="50"/>
+    </Window.Resources>
+
+    <Grid x:Name="Container">
+            <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="200"/>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>
+
+        <Button                      x:Name="Button0_0" Grid.Column="0" Grid.Row="0"/>
+        <Button Click="Button_Click" x:Name="Button1_0" Grid.Column="1" Grid.Row="0"/>
+        <Button                      x:Name="Button2_0" Grid.Column="2" Grid.Row="0"/>
+        <Button Click="Button_Click" x:Name="Button3_0" Grid.Column="3" Grid.Row="0"/>
+        <Button                      x:Name="Button4_0" Grid.Column="4" Grid.Row="0"/>
+        <Button Click="Button_Click" x:Name="Button5_0" Grid.Column="5" Grid.Row="0"/>
+        <Button                      x:Name="Button6_0" Grid.Column="6" Grid.Row="0"/>
+        <Button Click="Button_Click" x:Name="Button7_0" Grid.Column="7" Grid.Row="0"/>
+
+        <Button Click="Button_Click" x:Name="Button0_1" Grid.Column="0" Grid.Row="1"/>
+        <Button                      x:Name="Button1_1" Grid.Column="1" Grid.Row="1"/>
+        <Button Click="Button_Click" x:Name="Button2_1" Grid.Column="2" Grid.Row="1"/>
+        <Button                      x:Name="Button3_1" Grid.Column="3" Grid.Row="1"/>
+        <Button Click="Button_Click" x:Name="Button4_1" Grid.Column="4" Grid.Row="1"/>
+        <Button                      x:Name="Button5_1" Grid.Column="5" Grid.Row="1"/>
+        <Button Click="Button_Click" x:Name="Button6_1" Grid.Column="6" Grid.Row="1"/>
+        <Button                      x:Name="Button7_1" Grid.Column="7" Grid.Row="1"/>
+
+        <Button                      x:Name="Button0_2" Grid.Column="0" Grid.Row="2"/>
+        <Button Click="Button_Click" x:Name="Button1_2" Grid.Column="1" Grid.Row="2"/>
+        <Button                      x:Name="Button2_2" Grid.Column="2" Grid.Row="2"/>
+        <Button Click="Button_Click" x:Name="Button3_2" Grid.Column="3" Grid.Row="2"/>
+        <Button                      x:Name="Button4_2" Grid.Column="4" Grid.Row="2"/>
+        <Button Click="Button_Click" x:Name="Button5_2" Grid.Column="5" Grid.Row="2"/>
+        <Button                      x:Name="Button6_2" Grid.Column="6" Grid.Row="2"/>
+        <Button Click="Button_Click" x:Name="Button7_2" Grid.Column="7" Grid.Row="2"/>
         
+        <Button Click="Button_Click" x:Name="Button0_3" Grid.Column="0" Grid.Row="3"/>
+        <Button                      x:Name="Button1_3" Grid.Column="1" Grid.Row="3"/>
+        <Button Click="Button_Click" x:Name="Button2_3" Grid.Column="2" Grid.Row="3"/>
+        <Button                      x:Name="Button3_3" Grid.Column="3" Grid.Row="3"/>
+        <Button Click="Button_Click" x:Name="Button4_3" Grid.Column="4" Grid.Row="3"/>
+        <Button                      x:Name="Button5_3" Grid.Column="5" Grid.Row="3"/>
+        <Button Click="Button_Click" x:Name="Button6_3" Grid.Column="6" Grid.Row="3"/>
+        <Button                      x:Name="Button7_3" Grid.Column="7" Grid.Row="3"/>
+
+
+        <Button                      x:Name="Button0_4" Grid.Column="0" Grid.Row="4"/>
+        <Button Click="Button_Click" x:Name="Button1_4" Grid.Column="1" Grid.Row="4"/>
+        <Button                      x:Name="Button2_4" Grid.Column="2" Grid.Row="4"/>
+        <Button Click="Button_Click" x:Name="Button3_4" Grid.Column="3" Grid.Row="4"/>
+        <Button                      x:Name="Button4_4" Grid.Column="4" Grid.Row="4"/>
+        <Button Click="Button_Click" x:Name="Button5_4" Grid.Column="5" Grid.Row="4"/>
+        <Button                      x:Name="Button6_4" Grid.Column="6" Grid.Row="4"/>
+        <Button Click="Button_Click" x:Name="Button7_4" Grid.Column="7" Grid.Row="4"/>
+
+        <Button Click="Button_Click" x:Name="Button0_5" Grid.Column="0" Grid.Row="5"/>
+        <Button                      x:Name="Button1_5" Grid.Column="1" Grid.Row="5"/>
+        <Button Click="Button_Click" x:Name="Button2_5" Grid.Column="2" Grid.Row="5"/>
+        <Button                      x:Name="Button3_5" Grid.Column="3" Grid.Row="5"/>
+        <Button Click="Button_Click" x:Name="Button4_5" Grid.Column="4" Grid.Row="5"/>
+        <Button                      x:Name="Button5_5" Grid.Column="5" Grid.Row="5"/>
+        <Button Click="Button_Click" x:Name="Button6_5" Grid.Column="6" Grid.Row="5"/>
+        <Button                      x:Name="Button7_5" Grid.Column="7" Grid.Row="5"/>
+
+        <Button                      x:Name="Button0_6" Grid.Column="0" Grid.Row="6"/>
+        <Button Click="Button_Click" x:Name="Button1_6" Grid.Column="1" Grid.Row="6"/>
+        <Button                      x:Name="Button2_6" Grid.Column="2" Grid.Row="6"/>
+        <Button Click="Button_Click" x:Name="Button3_6" Grid.Column="3" Grid.Row="6"/>
+        <Button                      x:Name="Button4_6" Grid.Column="4" Grid.Row="6"/>
+        <Button Click="Button_Click" x:Name="Button5_6" Grid.Column="5" Grid.Row="6"/>
+        <Button                      x:Name="Button6_6" Grid.Column="6" Grid.Row="6"/>
+        <Button Click="Button_Click" x:Name="Button7_6" Grid.Column="7" Grid.Row="6"/>
+
+        <Button Click="Button_Click" x:Name="Button0_7" Grid.Column="0" Grid.Row="7"/>
+        <Button                      x:Name="Button1_7" Grid.Column="1" Grid.Row="7"/>
+        <Button Click="Button_Click" x:Name="Button2_7" Grid.Column="2" Grid.Row="7"/>
+        <Button                      x:Name="Button3_7" Grid.Column="3" Grid.Row="7"/>
+        <Button Click="Button_Click" x:Name="Button4_7" Grid.Column="4" Grid.Row="7"/>
+        <Button                      x:Name="Button5_7" Grid.Column="5" Grid.Row="7"/>
+        <Button Click="Button_Click" x:Name="Button6_7" Grid.Column="6" Grid.Row="7"/>
+        <Button                      x:Name="Button7_7" Grid.Column="7" Grid.Row="7"/>
     </Grid>
 </Window>
